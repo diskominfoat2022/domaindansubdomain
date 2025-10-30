@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Domain dan Subdomain Kabupaten Aceh Tengah</title>
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://upload.wikimedia.org/wikipedia/commons/f/f7/Lambang_Kabupaten_Aceh_Tengah.png"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      body {
+        background-color: #f9fafb;
+        color: #1e293b;
+        font-family: "Inter", sans-serif;
+      }
+
+      h1,
+      h2 {
+        color: #0f172a;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        background-color: #ffffff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        border: 1px solid #cbd5e1;
+        padding: 8px;
+        vertical-align: middle;
+      }
+
+      th {
+        background-color: #e2e8f0;
+        text-align: center;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f1f5f9;
+      }
+
+      td:first-child {
+        text-align: center;
+      }
+
+      .section-box {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .section-header {
+        background-color: #e2e8f0;
+        color: #0f172a;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      canvas {
+        display: block;
+        margin: auto;
+        max-width: 360px;
+        max-height: 360px;
+      }
+
+      .chart-labels {
+        font-size: 0.9rem;
+        color: #334155;
+        line-height: 1.4;
+        text-align: left;
+        margin-top: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body class="p-6">
+    <div class="flex justify-center mb-4">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/d/d1/Lambang_Kabupaten_Aceh_Tengah.png"
+        alt="Logo Pemerintah Kabupaten Aceh Tengah"
+        class="w-40 h-40"
+      />
+    </div>
+
+    <h1 class="text-3xl font-bold mb-10 text-center">
+      Domain dan Subdomain Pemerintah<br />
+      Kabupaten Aceh Tengah
+    </h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+      <div class="section-box text-center">
+        <h2 class="text-xl font-semibold mb-4 text-center">Domain dan Subdomain Instansi</h2>
+        <canvas id="pieChartInstansi"></canvas>
+        <div id="labelsInstansi" class="chart-labels"></div>
+      </div>
+      <div class="section-box text-center">
+        <h2 class="text-xl font-semibold mb-4 text-center">Domain Desa</h2>
+        <canvas id="pieChartDesa"></canvas>
+        <div id="labelsDesa" class="chart-labels"></div>
+      </div>
+    </div>
+
+    <!-- ===== Bagian Tabel Instansi dan Desa Sejajar ===== -->
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Tabel Instansi -->
+      <div class="section-box flex-1">
+        <h2 class="text-xl font-semibold mb-4 text-center">
+          Daftar Domain & Subdomain Instansi
+        </h2>
+        <div class="overflow-y-auto max-h-[600px] border rounded-lg">
+          <table id="table-instansi" class="w-full">
+            <thead class="sticky top-0 bg-gray-200 z-10">
+              <tr>
+                <th style="width: 60px; text-align: center">Nomor</th>
+                <th>Nama OPD/Bagian/Aplikasi</th>
+                <th>Domain/Subdomain</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tabel Desa -->
+      <div class="section-box flex-1">
+        <h2 class="text-xl font-semibold mb-4 text-center">
+          Daftar Domain Desa
+        </h2>
+        <div class="overflow-y-auto max-h-[600px] border rounded-lg">
+          <table id="table-desa" class="w-full">
+            <thead class="sticky top-0 bg-gray-200 z-10">
+              <tr>
+                <th style="width: 60px; text-align: center">Nomor</th>
+                <th>Nama Desa</th>
+                <th>Domain/Subdomain</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Fungsi parsing CSV sederhana
+      function parseCSV(text) {
+        if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+        return text
+          .split(/\r?\n/)
+          .filter((l) => l.trim() !== "")
+          .map((line) => line.split(",").map((c) => c.trim()));
+      }
+
+      // URL Google Sheet
+      const basePub =
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRK_YV1O75HkrGdWmGFQcpJcRX9bXjszG77yeTs3J6sLzv1tv0Jjzg6yZPdjIsVP7wVcAYSzb_9lrcg/pub?single=true&output=csv";
+
+      const gidChartInstansi = 0;
+      const gidTableInstansi = 133701255;
+      const gidChartDesa = 1739398843;
+      const gidTableDesa = 590421314;
+
+      const chartInstansiURL = basePub.replace(
+        "output=csv",
+        `gid=${gidChartInstansi}&single=true&output=csv`
+      );
+      const chartDesaURL = basePub.replace(
+        "output=csv",
+        `gid=${gidChartDesa}&single=true&output=csv`
+      );
+      const tableInstansiURL = basePub.replace(
+        "output=csv",
+        `gid=${gidTableInstansi}&single=true&output=csv`
+      );
+      const tableDesaURL = basePub.replace(
+        "output=csv",
+        `gid=${gidTableDesa}&single=true&output=csv`
+      );
+
+      // Warna lembut 10 warna
+      const chartColors = [
+        "#3B82F6", // biru terang
+        "#10B981", // hijau emerald
+        "#FACC15", // kuning cerah
+        "#EF4444", // merah terang
+        "#A855F7", // ungu cerah
+        "#F472B6", // pink lembut
+        "#06B6D4", // cyan / toska terang
+        "#84CC16", // hijau limau
+        "#FB923C", // oranye terang
+        "#E879F9", // magenta terang
+        "#F43F5E", // merah muda tua
+        "#14B8A6", // teal cerah
+        "#C084FC", // lavender terang
+        "#F59E0B", // amber terang
+        "#60A5FA", // biru muda langit
+      ];
+
+      // Gradient untuk efek 3D
+      function make3DEffectGradient(ctx, color) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, lighten(color, 0.3));
+        gradient.addColorStop(0.5, color);
+        gradient.addColorStop(1, darken(color, 0.25));
+        return gradient;
+      }
+
+      function lighten(color, percent) {
+        const num = parseInt(color.slice(1), 16),
+          amt = Math.round(2.55 * percent * 100),
+          R = (num >> 16) + amt,
+          G = ((num >> 8) & 0x00ff) + amt,
+          B = (num & 0x0000ff) + amt;
+        return (
+          "#" +
+          (
+            0x1000000 +
+            (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+            (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+            (B < 255 ? (B < 1 ? 0 : B) : 255)
+          )
+            .toString(16)
+            .slice(1)
+        );
+      }
+
+      function darken(color, percent) {
+        return lighten(color, -percent);
+      }
+
+      async function makePieChart(url, canvasId, labelDivId) {
+        const res = await fetch(url);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        const labels = rows.slice(1).map((r) => r[0]);
+        const values = rows.slice(1).map((r) => parseFloat(r[1]) || 0);
+
+        const ctx = document.getElementById(canvasId).getContext("2d");
+        const gradients = chartColors.map((c) => make3DEffectGradient(ctx, c));
+
+        new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels,
+            datasets: [
+              {
+                data: values,
+                backgroundColor: gradients,
+                borderColor: "#ffffff",
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: { display: false },
+            },
+            animation: { animateRotate: true, animateScale: true },
+            responsive: true,
+            maintainAspectRatio: true,
+          },
+        });
+
+        // Tambahkan daftar label + nilai di kanan bawah dalam bentuk tabel + total di bawah
+        const labelDiv = document.getElementById(labelDivId);
+        const total = values.reduce((a, b) => a + b, 0);
+
+        labelDiv.innerHTML = `
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 10px;">
+    <tbody>
+      ${labels
+        .map(
+          (l, i) => `
+          <tr>
+            <td style="width: 20px; padding: 4px;">
+              <div style="
+                width: 14px;
+                height: 14px;
+                background-color: ${chartColors[i % chartColors.length]};
+                border-radius: 3px;
+                border: 1px solid #ccc;
+              "></div>
+            </td>
+            <td style="padding: 4px 8px;">${l}</td>
+            <td style="padding: 4px 8px; text-align: right;">${values[i]}</td>
+          </tr>
+        `
+        )
+        .join("")}
+      <tr style="background-color: #000; color: #fff; font-weight: bold;">
+        <td></td>
+        <td style="padding: 6px 8px;">Total</td>
+        <td style="padding: 6px 8px; text-align: right;">${total}</td>
+      </tr>
+    </tbody>
+  </table>
+`;
+      }
+
+      async function makeTableInstansi(url) {
+        const res = await fetch(url);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        const tbody = document.querySelector("#table-instansi tbody");
+        tbody.innerHTML = "";
+        let no = 1;
+        for (let r of rows) {
+          const [a, b, c] = r;
+          if (a && !b && !c) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="3" class="section-header">${a}</td>`;
+            tbody.appendChild(tr);
+          } else if (a && b) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td style="text-align:center;">${no}</td><td>${a}</td><td>${b}</td>`;
+            tbody.appendChild(tr);
+            no++;
+          }
+        }
+      }
+
+      async function makeTableDesa(url) {
+        const res = await fetch(url);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        const tbody = document.querySelector("#table-desa tbody");
+        tbody.innerHTML = "";
+        let no = 1;
+        for (let r of rows) {
+          const [a, b, c] = r;
+          if (a && !b && !c) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="3" class="section-header">${a}</td>`;
+            tbody.appendChild(tr);
+          } else if (a && b) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td style="text-align:center;">${no}</td><td>${a}</td><td>${b}</td>`;
+            tbody.appendChild(tr);
+            no++;
+          }
+        }
+      }
+
+      // Jalankan semua
+      makePieChart(chartInstansiURL, "pieChartInstansi", "labelsInstansi");
+      makePieChart(chartDesaURL, "pieChartDesa", "labelsDesa");
+      makeTableInstansi(tableInstansiURL);
+      makeTableDesa(tableDesaURL);
+    </script>
+  </body>
+</html>
