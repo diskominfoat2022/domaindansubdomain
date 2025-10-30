@@ -99,59 +99,94 @@
       Kabupaten Aceh Tengah
     </h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-      <div class="section-box text-center">
-        <h2 class="text-xl font-semibold mb-4 text-center">Domain dan Subdomain Instansi</h2>
-        <canvas id="pieChartInstansi"></canvas>
-        <div id="labelsInstansi" class="chart-labels"></div>
-      </div>
-      <div class="section-box text-center">
-        <h2 class="text-xl font-semibold mb-4 text-center">Domain Desa</h2>
-        <canvas id="pieChartDesa"></canvas>
-        <div id="labelsDesa" class="chart-labels"></div>
-      </div>
+    <!-- ===== Bagian Chart Instansi & Desa ===== -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+  <!-- Chart Instansi -->
+  <div class="section-box text-center p-4">
+    <h2 class="text-lg md:text-xl font-semibold mb-3 md:mb-4">
+      Domain & Subdomain Instansi
+    </h2>
+    <div class="flex justify-center">
+      <canvas
+        id="pieChartInstansi"
+        class="max-w-[280px] sm:max-w-[320px] md:max-w-[360px] h-auto"
+      ></canvas>
     </div>
+    <div
+      id="labelsInstansi"
+      class="chart-labels mt-4 text-sm md:text-base overflow-x-auto"
+    ></div>
+  </div>
 
-    <!-- ===== Bagian Tabel Instansi dan Desa Sejajar ===== -->
-    <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Tabel Instansi -->
-      <div class="section-box flex-1">
-        <h2 class="text-xl font-semibold mb-4 text-center">
-          Daftar Domain & Subdomain Instansi
-        </h2>
-        <div class="overflow-y-auto max-h-[600px] border rounded-lg">
-          <table id="table-instansi" class="w-full">
-            <thead class="sticky top-0 bg-gray-200 z-10">
-              <tr>
-                <th style="width: 60px; text-align: center">Nomor</th>
-                <th>Nama OPD/Bagian/Aplikasi</th>
-                <th>Domain/Subdomain</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Tabel Desa -->
-      <div class="section-box flex-1">
-        <h2 class="text-xl font-semibold mb-4 text-center">
-          Daftar Domain Desa
-        </h2>
-        <div class="overflow-y-auto max-h-[600px] border rounded-lg">
-          <table id="table-desa" class="w-full">
-            <thead class="sticky top-0 bg-gray-200 z-10">
-              <tr>
-                <th style="width: 60px; text-align: center">Nomor</th>
-                <th>Nama Desa</th>
-                <th>Domain/Subdomain</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+  <!-- Chart Desa -->
+  <div class="section-box text-center p-4">
+    <h2 class="text-lg md:text-xl font-semibold mb-3 md:mb-4">
+      Domain Desa
+    </h2>
+    <div class="flex justify-center">
+      <canvas
+        id="pieChartDesa"
+        class="max-w-[280px] sm:max-w-[320px] md:max-w-[360px] h-auto"
+      ></canvas>
     </div>
+    <div
+      id="labelsDesa"
+      class="chart-labels mt-4 text-sm md:text-base overflow-x-auto"
+    ></div>
+  </div>
+</div>
+
+<!-- ===== Bagian Tabel Instansi & Desa Sejajar (Responsif) ===== -->
+<div class="flex flex-col lg:flex-row gap-8">
+  <!-- Tabel Instansi -->
+  <div class="section-box flex-1 overflow-hidden">
+    <h2 class="text-lg md:text-xl font-semibold mb-4 text-center">
+      Daftar Domain & Subdomain Instansi
+    </h2>
+    <div
+      class="overflow-x-auto overflow-y-auto max-h-[500px] border rounded-lg shadow-sm"
+    >
+      <table
+        id="table-instansi"
+        class="min-w-full text-sm md:text-base border-collapse"
+      >
+        <thead class="sticky top-0 bg-gray-200 z-10">
+          <tr>
+            <th class="w-[60px] text-center p-2 md:p-3">Nomor</th>
+            <th class="p-2 md:p-3">Nama OPD/Bagian/Aplikasi</th>
+            <th class="p-2 md:p-3">Domain/Subdomain</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tabel Desa -->
+  <div class="section-box flex-1 overflow-hidden">
+    <h2 class="text-lg md:text-xl font-semibold mb-4 text-center">
+      Daftar Domain Desa
+    </h2>
+    <div
+      class="overflow-x-auto overflow-y-auto max-h-[500px] border rounded-lg shadow-sm"
+    >
+      <table
+        id="table-desa"
+        class="min-w-full text-sm md:text-base border-collapse"
+      >
+        <thead class="sticky top-0 bg-gray-200 z-10">
+          <tr>
+            <th class="w-[60px] text-center p-2 md:p-3">Nomor</th>
+            <th class="p-2 md:p-3">Nama Desa</th>
+            <th class="p-2 md:p-3">Domain/Subdomain</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 
     <script>
       // Fungsi parsing CSV sederhana
@@ -361,4 +396,5 @@
     </script>
   </body>
 </html>
+
 
